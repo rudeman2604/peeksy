@@ -1,0 +1,151 @@
+.hostView {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--pk-space-xl);
+  gap: var(--pk-space-lg);
+  background: var(--pk-bg-primary);
+  overflow-y: auto;
+}
+
+.hostHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--pk-space-lg);
+  width: 100%;
+  max-width: 700px;
+}
+
+.hostLogo {
+  height: 32px;
+  width: auto;
+  user-select: none;
+}
+
+.hostStatus {
+  display: flex;
+  align-items: center;
+  gap: var(--pk-space-sm);
+}
+
+.hostLiveDot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--pk-radius-circle);
+  background: var(--pk-live-red);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.hostLiveText {
+  color: var(--pk-live-red);
+  font-size: var(--pk-font-size-sm);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.hostViewerCount {
+  color: var(--pk-text-secondary);
+  font-size: var(--pk-font-size-sm);
+  margin-left: var(--pk-space-sm);
+}
+
+.hostPreviewContainer {
+  width: 100%;
+  max-width: 700px;
+  border-radius: var(--pk-radius-lg);
+  overflow: hidden;
+  background: var(--pk-bg-secondary);
+  border: 1px solid var(--pk-border);
+}
+
+.hostPreview {
+  width: 100%;
+  display: block;
+  border-radius: var(--pk-radius-lg);
+}
+
+.hostLinkSection {
+  width: 100%;
+  max-width: 700px;
+  background: var(--pk-bg-surface);
+  backdrop-filter: var(--pk-backdrop-blur);
+  border: 1px solid var(--pk-border);
+  border-radius: var(--pk-radius-lg);
+  padding: var(--pk-space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--pk-space-sm);
+}
+
+.hostLinkLabel {
+  color: var(--pk-text-secondary);
+  font-size: var(--pk-font-size-sm);
+}
+
+.hostLinkRow {
+  display: flex;
+  align-items: center;
+  gap: var(--pk-space-sm);
+}
+
+.hostLinkUrl {
+  flex: 1;
+  color: var(--pk-text-primary);
+  font-family: var(--pk-font-mono);
+  font-size: var(--pk-font-size-sm);
+  background: var(--pk-bg-secondary);
+  padding: var(--pk-space-sm) var(--pk-space-md);
+  border-radius: var(--pk-radius-md);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  user-select: all;
+}
+
+.hostCopyButton {
+  background: var(--pk-accent);
+  color: var(--pk-text-primary);
+  border: none;
+  border-radius: var(--pk-radius-md);
+  padding: var(--pk-space-sm) var(--pk-space-md);
+  font-size: var(--pk-font-size-sm);
+  font-family: var(--pk-font-family);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--pk-transition-fast);
+  white-space: nowrap;
+}
+
+.hostCopyButton:hover {
+  background: var(--pk-accent-hover);
+}
+
+.hostStopButton {
+  background: var(--pk-live-red);
+  color: var(--pk-text-primary);
+  border: none;
+  border-radius: var(--pk-radius-pill);
+  padding: var(--pk-space-sm) var(--pk-space-xl);
+  font-size: var(--pk-font-size-md);
+  font-family: var(--pk-font-family);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--pk-transition-normal);
+}
+
+.hostStopButton:hover {
+  opacity: 0.9;
+  box-shadow: 0 0 20px var(--pk-live-red-glow);
+}
+
+.hostConnectionState {
+  color: var(--pk-text-muted);
+  font-size: var(--pk-font-size-xs);
+}

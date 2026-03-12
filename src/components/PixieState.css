@@ -1,0 +1,53 @@
+.pixieState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pk-space-md);
+}
+
+/* ── Size variants ── */
+
+.pixieState--small .pixieImage,
+.pixieState--small .pixieRolling {
+  width: 48px;
+  height: 48px;
+}
+
+.pixieState--medium .pixieImage,
+.pixieState--medium .pixieRolling {
+  width: 120px;
+  height: 120px;
+}
+
+.pixieState--large .pixieImage,
+.pixieState--large .pixieRolling {
+  width: 200px;
+  height: 200px;
+}
+
+.pixieImage {
+  object-fit: contain;
+  user-select: none;
+}
+
+/* ── Rolling sprite animation ── */
+
+.pixieRolling {
+  background-repeat: no-repeat;
+  background-size: 500% 100%;
+  animation: roll 900ms steps(5) infinite;
+}
+
+@keyframes roll {
+  from { background-position: 0 0; }
+  to { background-position: -500% 0; }
+}
+
+/* ── Status text ── */
+
+.pixieStatusText {
+  color: var(--pk-text-secondary);
+  font-size: var(--pk-font-size-md);
+  text-align: center;
+  user-select: none;
+}

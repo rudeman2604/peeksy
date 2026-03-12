@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  peeksy:
+    build: .
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
+    environment:
+      - PORT=${PORT:-3000}
+      - ROOM_MAX_LIFETIME=${ROOM_MAX_LIFETIME:-86400}
+      - ROOM_INACTIVITY_TIMEOUT=${ROOM_INACTIVITY_TIMEOUT:-3600}
+      - MAX_ROOMS=${MAX_ROOMS:-50}
+      - MAX_VIEWERS_PER_ROOM=${MAX_VIEWERS_PER_ROOM:-10}
+      - STUN_SERVERS=${STUN_SERVERS:-stun:stun.l.google.com:19302}
+    restart: unless-stopped

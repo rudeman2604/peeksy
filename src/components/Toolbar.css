@@ -1,0 +1,266 @@
+.toolbar {
+  position: fixed;
+  top: 0;
+  left: var(--pk-space-md);
+  right: var(--pk-space-md);
+  z-index: var(--pk-z-toolbar);
+  background: var(--pk-bg-surface);
+  backdrop-filter: var(--pk-backdrop-blur);
+  border: 1px solid var(--pk-border);
+  border-top: none;
+  border-radius: 0 0 var(--pk-radius-lg) var(--pk-radius-lg);
+  box-shadow: var(--pk-shadow-card);
+  transition: all var(--pk-transition-normal);
+  animation: toolbarSlideIn 300ms ease-out;
+}
+
+@keyframes toolbarSlideIn {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ── Collapsed bar ── */
+
+.toolbarCollapsedBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--pk-toolbar-collapsed-height);
+  padding: 0 var(--pk-space-md);
+  cursor: pointer;
+  user-select: none;
+}
+
+.toolbarLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--pk-space-sm);
+}
+
+.toolbarTelescopeWrap {
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.toolbarTelescopeIcon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.toolbarLiveDot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--pk-radius-circle);
+  background: var(--pk-live-red);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.toolbarViewerCount {
+  color: var(--pk-text-secondary);
+  font-size: var(--pk-font-size-sm);
+}
+
+.toolbarChevron {
+  background: none;
+  border: none;
+  color: var(--pk-text-secondary);
+  font-size: var(--pk-font-size-xs);
+  cursor: pointer;
+  padding: var(--pk-space-xs);
+  border-radius: var(--pk-radius-md);
+  transition: color var(--pk-transition-fast);
+}
+
+.toolbarChevron:hover {
+  color: var(--pk-text-primary);
+}
+
+/* ── Expanded content ── */
+
+.toolbarExpandedContent {
+  padding: var(--pk-space-sm) var(--pk-space-md) var(--pk-space-md);
+  border-top: 1px solid var(--pk-border);
+}
+
+.toolbarControls {
+  display: flex;
+  align-items: center;
+  gap: var(--pk-space-sm);
+  flex-wrap: wrap;
+}
+
+.toolbarLogo {
+  height: 24px;
+  width: auto;
+  user-select: none;
+  margin-right: var(--pk-space-sm);
+}
+
+/* ── Toolbar button base ── */
+
+.toolbarButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--pk-space-xs) var(--pk-space-sm);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--pk-radius-md);
+  color: var(--pk-text-secondary);
+  font-family: var(--pk-font-family);
+  font-size: var(--pk-font-size-xs);
+  cursor: pointer;
+  transition: all var(--pk-transition-fast);
+  position: relative;
+  white-space: nowrap;
+}
+
+.toolbarButton:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--pk-border-hover);
+  color: var(--pk-text-primary);
+}
+
+.toolbarButton--active {
+  color: var(--pk-accent);
+  border-color: var(--pk-accent-glow);
+}
+
+.toolbarButton--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.toolbarButton--disabled:hover {
+  background: transparent;
+  border-color: transparent;
+}
+
+.toolbarButtonIcon {
+  font-size: var(--pk-font-size-lg);
+  line-height: 1;
+}
+
+.toolbarButtonLabel {
+  font-size: var(--pk-font-size-xs);
+  line-height: 1;
+}
+
+/* ── Dropdown base ── */
+
+.toolbarDropdown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: var(--pk-space-sm);
+  background: var(--pk-bg-surface);
+  backdrop-filter: var(--pk-backdrop-blur);
+  border: 1px solid var(--pk-border);
+  border-radius: var(--pk-radius-lg);
+  box-shadow: var(--pk-shadow-card);
+  padding: var(--pk-space-sm);
+  min-width: 220px;
+  z-index: 1;
+  animation: dropdownFadeIn 150ms ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.toolbarDropdownItem {
+  display: flex;
+  align-items: center;
+  gap: var(--pk-space-sm);
+  padding: var(--pk-space-sm) var(--pk-space-md);
+  border-radius: var(--pk-radius-md);
+  color: var(--pk-text-primary);
+  font-size: var(--pk-font-size-sm);
+  cursor: pointer;
+  transition: background var(--pk-transition-fast);
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: var(--pk-font-family);
+}
+
+.toolbarDropdownItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.toolbarDropdownItem--info {
+  color: var(--pk-text-muted);
+  cursor: default;
+  font-size: var(--pk-font-size-xs);
+}
+
+.toolbarDropdownItem--info:hover {
+  background: transparent;
+}
+
+.toolbarDropdownItem--danger {
+  color: var(--pk-live-red);
+}
+
+.toolbarDropdownSeparator {
+  height: 1px;
+  background: var(--pk-border);
+  margin: var(--pk-space-xs) 0;
+}
+
+/* ── Viewer dots ── */
+
+.toolbarViewerDots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pk-space-sm);
+  padding-top: var(--pk-space-sm);
+  border-top: 1px solid var(--pk-border);
+  margin-top: var(--pk-space-sm);
+}
+
+.toolbarViewerDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--pk-radius-circle);
+  background: var(--pk-connection-healthy);
+  cursor: default;
+}
+
+.toolbarViewerExtra {
+  color: var(--pk-text-muted);
+  font-size: var(--pk-font-size-xs);
+}
+
+/* ── Responsive: narrow viewports ── */
+
+@media (max-width: 768px) {
+  .toolbarButtonLabel {
+    display: none;
+  }
+
+  .toolbarLogo {
+    display: none;
+  }
+}

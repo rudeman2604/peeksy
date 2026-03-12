@@ -1,0 +1,11 @@
+@import './styles/design-tokens.css';
+
+body {
+  background: var(--pk-bg-primary);
+  color: var(--pk-text-primary);
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+}
