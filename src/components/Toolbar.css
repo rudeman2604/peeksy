@@ -63,10 +63,26 @@
   height: 8px;
   border-radius: var(--pk-radius-circle);
   background: var(--pk-live-red);
-  animation: pulse 2s ease-in-out infinite;
+  animation: liveDotPulse 2s ease-in-out infinite;
 }
 
-@keyframes pulse {
+/* Healthy: slow pulse (2s) */
+.toolbarLiveDot--healthy {
+  animation: liveDotPulse 2s ease-in-out infinite;
+}
+
+/* Degrading: faster pulse (1s) */
+.toolbarLiveDot--degrading {
+  animation: liveDotPulse 1s ease-in-out infinite;
+}
+
+/* Bad: solid (no pulse) */
+.toolbarLiveDot--bad {
+  animation: none;
+  opacity: 1;
+}
+
+@keyframes liveDotPulse {
   0%, 100% { opacity: 0.7; }
   50% { opacity: 1; }
 }
@@ -253,7 +269,7 @@
   font-size: var(--pk-font-size-xs);
 }
 
-/* ── Responsive: narrow viewports ── */
+/* ── Responsive: Tablet ── */
 
 @media (max-width: 768px) {
   .toolbarButtonLabel {
@@ -262,5 +278,30 @@
 
   .toolbarLogo {
     display: none;
+  }
+
+  .toolbar {
+    left: var(--pk-space-sm);
+    right: var(--pk-space-sm);
+  }
+}
+
+/* ── Responsive: Mobile ── */
+
+@media (max-width: 480px) {
+  .toolbarControls {
+    gap: var(--pk-space-xs);
+  }
+
+  .toolbarButton {
+    padding: var(--pk-space-xs);
+  }
+
+  .toolbarCollapsedBar {
+    padding: 0 var(--pk-space-sm);
+  }
+
+  .toolbarExpandedContent {
+    padding: var(--pk-space-xs) var(--pk-space-sm) var(--pk-space-sm);
   }
 }

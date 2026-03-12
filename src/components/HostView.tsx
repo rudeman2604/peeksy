@@ -4,12 +4,19 @@ import { useSignaling } from '../hooks/useSignaling';
 import { useWebRTC } from '../hooks/useWebRTC';
 import { useSettings } from '../hooks/useSettings';
 import { useHeartbeat } from '../hooks/useHeartbeat';
+import { usePerformanceStats } from '../hooks/usePerformanceStats';
+import { useLagDetection } from '../hooks/useLagDetection';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 
 import { WS_MESSAGES, getRoomUrl } from '../lib/constants';
-import type { WsMessage, WsRoomCreated, WsViewerJoined, WsViewerLeft } from '../lib/types';
+import type { WsMessage, WsRoomCreated, WsViewerJoined, WsViewerLeft, QualityPresetName } from '../lib/types';
+import { QUALITY_PRESETS } from '../lib/constants';
 
 import Toolbar from './Toolbar';
 import Toast from './Toast';
+import PerformanceOverlay from './PerformanceOverlay';
+import LagWarning from './LagWarning';
 import StatusNotificationContainer, {
   createJoinNotification,
   createLeaveNotification,
@@ -52,12 +59,48 @@ export default function HostView({
     cleanup,
     replaceVideoTrack,
     addOrReplaceAudioTrack,
+    connectionsRef,
   } = useWebRTC({
     stream,
     send,
     lastMessage,
     isHost: true,
   });
+
+  const { stats: perfStats, perViewerStats } = usePerformanceStats({
+    connectionsRef,
+    isActive: settings.showPerformanceMonitor || viewerCount > 0,
+  });
+
+  const expectedFps = settings.qualityPreset === 'custom'
+    ? settings.customQuality.frameRate
+    : QUALITY_PRESETS[settings.qualityPreset].frameRate;
+
+  const {
+    overallQuality,
+    perViewerQuality,
+    shouldWarn,
+    suggestedPreset,
+    dismissWarning,
+  } = useLagDetection({
+    perViewerStats,
+    expectedFps,
+    isActive: viewerCount > 0,
+  });
+
+  // Dynamic tab title
+  const titleSuffix = viewerCount > 0 ? ` (${viewerCount})` : '';
+  useDocumentTitle(`\uD83D\uDD34 LIVE${titleSuffix} — Peeksy`);
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: 'p',
+      ctrl: true,
+      shift: true,
+      action: () => updateSetting('showPerformanceMonitor', !settings.showPerformanceMonitor),
+    },
+  ]);
 
   // Create room once connected
   useEffect(() => {
@@ -154,6 +197,14 @@ export default function HostView({
     setNotifications(prev => prev.filter(n => n.id !== id));
   }, []);
 
+  const handleSwitchPreset = useCallback(() => {
+    if (suggestedPreset) {
+      updateSetting('qualityPreset', suggestedPreset as QualityPresetName);
+      showToast(`Switched to ${QUALITY_PRESETS[suggestedPreset as QualityPresetName].label} preset`);
+      dismissWarning();
+    }
+  }, [suggestedPreset, updateSetting, showToast, dismissWarning]);
+
   return (
     <>
       <Toolbar
@@ -174,12 +225,31 @@ export default function HostView({
         onResetSettings={resetSettings}
         roomPassword={roomPassword}
         onPasswordChange={handlePasswordChange}
+        overallQuality={overallQuality}
+        connectionColors={settings.connectionColors}
       />
+      {shouldWarn && suggestedPreset && (
+        <LagWarning
+          quality={overallQuality}
+          suggestedPreset={suggestedPreset as QualityPresetName}
+          onSwitch={handleSwitchPreset}
+          onDismiss={dismissWarning}
+          toolbarPosition={settings.toolbarPosition}
+        />
+      )}
       <StatusNotificationContainer
         notifications={notifications}
         onExpire={handleNotificationExpire}
         toolbarPosition={settings.toolbarPosition}
       />
+      {settings.showPerformanceMonitor && (
+        <PerformanceOverlay
+          stats={perfStats}
+          visibleStats={settings.performanceStats}
+          connectionColors={settings.connectionColors}
+          onClose={() => updateSetting('showPerformanceMonitor', false)}
+        />
+      )}
       <Toast text={toastText} onDone={() => setToastText(null)} />
     </>
   );

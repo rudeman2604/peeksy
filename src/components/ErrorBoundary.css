@@ -1,0 +1,90 @@
+/* ── Error Boundary ── */
+
+.errorBoundary {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pk-bg-primary);
+  z-index: var(--pk-z-modal);
+}
+
+.errorBoundaryCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pk-space-md);
+  padding: var(--pk-space-2xl);
+  max-width: 400px;
+  text-align: center;
+}
+
+.errorBoundaryPixie {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.errorBoundaryTitle {
+  color: var(--pk-text-primary);
+  font-size: var(--pk-font-size-xl);
+  font-weight: 700;
+}
+
+.errorBoundaryMessage {
+  color: var(--pk-text-secondary);
+  font-size: var(--pk-font-size-md);
+  line-height: 1.5;
+}
+
+.errorBoundaryDetails {
+  width: 100%;
+  padding: var(--pk-space-sm);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--pk-border);
+  border-radius: var(--pk-radius-md);
+  color: var(--pk-text-muted);
+  font-family: var(--pk-font-mono);
+  font-size: var(--pk-font-size-xs);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow: auto;
+  max-height: 120px;
+}
+
+.errorBoundaryActions {
+  display: flex;
+  gap: var(--pk-space-sm);
+}
+
+.errorBoundaryButton {
+  padding: var(--pk-space-sm) var(--pk-space-lg);
+  border-radius: var(--pk-radius-md);
+  font-family: var(--pk-font-family);
+  font-size: var(--pk-font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--pk-transition-fast);
+}
+
+.errorBoundaryButton--primary {
+  background: var(--pk-accent);
+  border: none;
+  color: white;
+}
+
+.errorBoundaryButton--primary:hover {
+  background: var(--pk-accent-hover);
+}
+
+.errorBoundaryButton--secondary {
+  background: transparent;
+  border: 1px solid var(--pk-border);
+  color: var(--pk-text-secondary);
+}
+
+.errorBoundaryButton--secondary:hover {
+  border-color: var(--pk-border-hover);
+  color: var(--pk-text-primary);
+}

@@ -1,0 +1,105 @@
+/* ── Lag Warning ── */
+
+.lagWarning {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--pk-z-notification);
+  display: flex;
+  align-items: center;
+  gap: var(--pk-space-sm);
+  padding: var(--pk-space-sm) var(--pk-space-md);
+  background: var(--pk-bg-surface);
+  backdrop-filter: var(--pk-backdrop-blur);
+  -webkit-backdrop-filter: var(--pk-backdrop-blur);
+  border: 1px solid var(--pk-border);
+  border-radius: var(--pk-radius-lg);
+  box-shadow: var(--pk-shadow-card);
+  animation: lagWarningIn 300ms ease-out;
+  pointer-events: auto;
+}
+
+.lagWarning--top {
+  top: var(--pk-space-xl);
+}
+
+.lagWarning--bottom {
+  bottom: var(--pk-space-xl);
+}
+
+.lagWarning--degrading {
+  border-color: var(--pk-connection-degrading);
+}
+
+.lagWarning--bad {
+  border-color: var(--pk-connection-bad);
+}
+
+@keyframes lagWarningIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.lagWarningPixie {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.lagWarningContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pk-space-xs);
+}
+
+.lagWarningText {
+  color: var(--pk-text-primary);
+  font-size: var(--pk-font-size-sm);
+  font-weight: 600;
+}
+
+.lagWarningActions {
+  display: flex;
+  gap: var(--pk-space-sm);
+}
+
+.lagWarningSwitch {
+  padding: var(--pk-space-xs) var(--pk-space-sm);
+  background: var(--pk-accent);
+  border: none;
+  border-radius: var(--pk-radius-sm);
+  color: white;
+  font-family: var(--pk-font-family);
+  font-size: var(--pk-font-size-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--pk-transition-fast);
+}
+
+.lagWarningSwitch:hover {
+  background: var(--pk-accent-hover);
+}
+
+.lagWarningDismiss {
+  padding: var(--pk-space-xs) var(--pk-space-sm);
+  background: transparent;
+  border: 1px solid var(--pk-border);
+  border-radius: var(--pk-radius-sm);
+  color: var(--pk-text-secondary);
+  font-family: var(--pk-font-family);
+  font-size: var(--pk-font-size-xs);
+  cursor: pointer;
+  transition: all var(--pk-transition-fast);
+}
+
+.lagWarningDismiss:hover {
+  border-color: var(--pk-border-hover);
+  color: var(--pk-text-primary);
+}

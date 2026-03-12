@@ -339,3 +339,21 @@
   color: var(--pk-live-red);
   background: rgba(239, 68, 68, 0.08);
 }
+
+/* ── Responsive: Mobile ── */
+
+@media (max-width: 480px) {
+  .settingsPanel {
+    width: 95%;
+    max-height: 90vh;
+    border-radius: var(--pk-radius-lg);
+  }
+
+  .settingsPresetGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .settingsCustomQuality {
+    grid-template-columns: 1fr;
+  }
+}

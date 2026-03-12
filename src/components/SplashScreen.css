@@ -56,3 +56,38 @@
 .startButton:active {
   transform: scale(0.97);
 }
+
+/* ── Responsive: Tablet ── */
+
+@media (max-width: 768px) {
+  .splashLogo {
+    max-width: 160px;
+  }
+
+  .startButton {
+    font-size: var(--pk-font-size-md);
+    padding: var(--pk-space-sm) var(--pk-space-xl);
+  }
+
+  .splashContent {
+    gap: var(--pk-space-lg);
+  }
+}
+
+/* ── Responsive: Mobile ── */
+
+@media (max-width: 480px) {
+  .splashLogo {
+    max-width: 120px;
+  }
+
+  .startButton {
+    font-size: var(--pk-font-size-sm);
+    padding: var(--pk-space-sm) var(--pk-space-lg);
+  }
+
+  .splashContent {
+    gap: var(--pk-space-md);
+    padding: 0 var(--pk-space-md);
+  }
+}

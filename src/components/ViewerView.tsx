@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 
 import { useSignaling } from '../hooks/useSignaling';
 import { useHeartbeat } from '../hooks/useHeartbeat';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 import { WS_MESSAGES } from '../lib/constants';
 import type { WsMessage, ViewerState, WsSdpOffer, WsIceCandidate, WsJoinRejected } from '../lib/types';
@@ -318,6 +319,20 @@ export default function ViewerView({ roomId }: ViewerViewProps) {
       setCursorHidden(false);
     };
   }, [viewerState]);
+
+  // Dynamic tab title
+  const viewerTitleMap: Record<ViewerState, string> = {
+    connecting: 'Connecting... — Peeksy',
+    watching: '\uD83D\uDC40 Watching — Peeksy',
+    password: 'Enter Password — Peeksy',
+    reconnecting: 'Reconnecting... — Peeksy',
+    disconnected: 'Disconnected — Peeksy',
+    'host-stopped': 'Stream Ended — Peeksy',
+    'room-not-found': 'Room Not Found — Peeksy',
+    'room-full': 'Room Full — Peeksy',
+    'room-expired': 'Room Expired — Peeksy',
+  };
+  useDocumentTitle(viewerTitleMap[viewerState] || 'Peeksy');
 
   // ── Render based on viewer state ──
 

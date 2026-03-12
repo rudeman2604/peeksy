@@ -1,1 +1,128 @@
-/* [MP4] Stats overlay styles — placeholder */
+/* ── Performance Overlay ── */
+
+.perfOverlay {
+  position: fixed;
+  top: var(--pk-space-xl);
+  right: var(--pk-space-md);
+  z-index: var(--pk-z-overlay);
+  width: 200px;
+  background: var(--pk-bg-surface);
+  backdrop-filter: var(--pk-backdrop-blur);
+  -webkit-backdrop-filter: var(--pk-backdrop-blur);
+  border: 1px solid var(--pk-border);
+  border-radius: var(--pk-radius-md);
+  box-shadow: var(--pk-shadow-card);
+  font-family: var(--pk-font-family);
+  animation: perfOverlayIn 200ms ease-out;
+  user-select: none;
+}
+
+@keyframes perfOverlayIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Header ── */
+
+.perfOverlayHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--pk-space-xs) var(--pk-space-sm);
+  border-bottom: 1px solid var(--pk-border);
+}
+
+.perfOverlayTitle {
+  color: var(--pk-text-secondary);
+  font-size: var(--pk-font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.perfOverlayClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  border-radius: var(--pk-radius-circle);
+  color: var(--pk-text-muted);
+  font-size: var(--pk-font-size-xs);
+  cursor: pointer;
+  transition: all var(--pk-transition-fast);
+}
+
+.perfOverlayClose:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--pk-text-primary);
+}
+
+/* ── Stats List ── */
+
+.perfOverlayStats {
+  padding: var(--pk-space-xs) var(--pk-space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.perfOverlayStat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+
+.perfOverlayStatLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--pk-space-xs);
+}
+
+.perfOverlayDot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--pk-radius-circle);
+  flex-shrink: 0;
+}
+
+.perfOverlayDot--healthy {
+  background: var(--pk-connection-healthy);
+}
+
+.perfOverlayDot--degrading {
+  background: var(--pk-connection-degrading);
+}
+
+.perfOverlayDot--bad {
+  background: var(--pk-connection-bad);
+}
+
+.perfOverlayLabel {
+  color: var(--pk-text-muted);
+  font-size: var(--pk-font-size-xs);
+}
+
+.perfOverlayValue {
+  color: var(--pk-text-primary);
+  font-family: var(--pk-font-mono);
+  font-size: var(--pk-font-size-xs);
+}
+
+/* ── Empty State ── */
+
+.perfOverlayEmpty {
+  padding: var(--pk-space-sm);
+  color: var(--pk-text-muted);
+  font-size: var(--pk-font-size-xs);
+  text-align: center;
+}

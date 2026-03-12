@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 
-import type { ViewerInfo, PeeksySettings } from '../lib/types';
+import type { ViewerInfo, PeeksySettings, ConnectionQuality } from '../lib/types';
 
 import ScreenPicker from './ScreenPicker';
 import PiPCamera from './PiPCamera';
@@ -32,6 +32,8 @@ interface ToolbarProps {
   onResetSettings: () => void;
   roomPassword: string | null;
   onPasswordChange: (password: string | null) => void;
+  overallQuality: ConnectionQuality;
+  connectionColors: PeeksySettings['connectionColors'];
 }
 
 // ── Component ──
@@ -54,6 +56,8 @@ export default function Toolbar({
   onResetSettings,
   roomPassword,
   onPasswordChange,
+  overallQuality,
+  connectionColors,
 }: ToolbarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -105,7 +109,16 @@ export default function Toolbar({
                 alt="Live"
                 draggable={false}
               />
-              <span className="toolbarLiveDot" />
+              <span
+                className={`toolbarLiveDot toolbarLiveDot--${overallQuality}`}
+                style={{
+                  backgroundColor: overallQuality === 'bad'
+                    ? connectionColors.bad
+                    : overallQuality === 'degrading'
+                    ? connectionColors.degrading
+                    : connectionColors.healthy,
+                }}
+              />
             </div>
             <span className="toolbarViewerCount">{viewerCount}</span>
           </div>
@@ -171,6 +184,13 @@ export default function Toolbar({
                     key={id}
                     className="toolbarViewerDot"
                     title={`Viewer ${index + 1}`}
+                    style={{
+                      backgroundColor: overallQuality === 'bad'
+                        ? connectionColors.bad
+                        : overallQuality === 'degrading'
+                        ? connectionColors.degrading
+                        : connectionColors.healthy,
+                    }}
                   />
                 ))}
                 {extraCount > 0 && (
