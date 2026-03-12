@@ -2,12 +2,19 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 
 import { useSignaling } from '../hooks/useSignaling';
 import { useWebRTC } from '../hooks/useWebRTC';
+import { useSettings } from '../hooks/useSettings';
+import { useHeartbeat } from '../hooks/useHeartbeat';
 
 import { WS_MESSAGES, getRoomUrl } from '../lib/constants';
-import type { WsMessage, WsRoomCreated } from '../lib/types';
+import type { WsMessage, WsRoomCreated, WsViewerJoined, WsViewerLeft } from '../lib/types';
 
 import Toolbar from './Toolbar';
 import Toast from './Toast';
+import StatusNotificationContainer, {
+  createJoinNotification,
+  createLeaveNotification,
+} from './StatusNotification';
+import type { StatusNotificationItem } from './StatusNotification';
 
 // ── Types ──
 
@@ -31,8 +38,13 @@ export default function HostView({
   const [roomUrl, setRoomUrl] = useState<string>('');
   const [roomCreated, setRoomCreated] = useState(false);
   const [toastText, setToastText] = useState<string | null>(null);
+  const [notifications, setNotifications] = useState<StatusNotificationItem[]>([]);
+  const [roomPassword, setRoomPassword] = useState<string | null>(null);
 
+  const { settings, updateSetting, updateNestedSetting, resetSettings } = useSettings();
   const { send, lastMessage, connectionState } = useSignaling(true);
+
+  useHeartbeat({ connectionState });
 
   const {
     viewerCount,
@@ -55,7 +67,7 @@ export default function HostView({
     }
   }, [connectionState, roomCreated, send]);
 
-  // Handle room_created message
+  // Handle room_created and viewer join/leave messages
   useEffect(() => {
     if (!lastMessage) return;
 
@@ -71,8 +83,25 @@ export default function HostView({
       }).catch(() => {
         console.warn('[Host] Clipboard write failed');
       });
+
+      // Apply saved password if any
+      if (roomPassword) {
+        send({
+          type: WS_MESSAGES.ROOM_SETTINGS,
+          password: roomPassword,
+        } as WsMessage);
+      }
     }
-  }, [lastMessage]);
+
+    // Show join/leave notifications
+    if (lastMessage.type === WS_MESSAGES.VIEWER_JOINED && settings.showNotifications) {
+      setNotifications(prev => [...prev, createJoinNotification()]);
+    }
+
+    if (lastMessage.type === WS_MESSAGES.VIEWER_LEFT && settings.showNotifications) {
+      setNotifications(prev => [...prev, createLeaveNotification()]);
+    }
+  }, [lastMessage, settings.showNotifications, roomPassword, send]);
 
   const showToast = useCallback((text: string) => {
     setToastText(text);
@@ -100,19 +129,30 @@ export default function HostView({
     addOrReplaceAudioTrack(track);
   }, [addOrReplaceAudioTrack]);
 
-  // Handle video track replacement (from PiP camera)
   const handleReplaceVideoTrack = useCallback((track: MediaStreamTrack) => {
     replaceVideoTrack(track);
   }, [replaceVideoTrack]);
 
   const handleRegenerateLink = useCallback(() => {
-    // Disconnect all viewers, destroy old room, create new one
     cleanup();
     setRoomCreated(false);
     setRoomUrl('');
-    // The useEffect watching connectionState + roomCreated will auto-create a new room
     showToast('Link regenerated!');
   }, [cleanup, showToast]);
+
+  // Handle password changes from settings
+  const handlePasswordChange = useCallback((password: string | null) => {
+    setRoomPassword(password);
+    send({
+      type: WS_MESSAGES.ROOM_SETTINGS,
+      password: password,
+    } as WsMessage);
+    showToast(password ? 'Room password set' : 'Room password removed');
+  }, [send, showToast]);
+
+  const handleNotificationExpire = useCallback((id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  }, []);
 
   return (
     <>
@@ -128,6 +168,17 @@ export default function HostView({
         replaceVideoTrack={handleReplaceVideoTrack}
         onRegenerateLink={handleRegenerateLink}
         showToast={showToast}
+        settings={settings}
+        onUpdateSetting={updateSetting}
+        onUpdateNestedSetting={updateNestedSetting}
+        onResetSettings={resetSettings}
+        roomPassword={roomPassword}
+        onPasswordChange={handlePasswordChange}
+      />
+      <StatusNotificationContainer
+        notifications={notifications}
+        onExpire={handleNotificationExpire}
+        toolbarPosition={settings.toolbarPosition}
       />
       <Toast text={toastText} onDone={() => setToastText(null)} />
     </>

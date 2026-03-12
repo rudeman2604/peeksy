@@ -5,6 +5,10 @@
   position: relative;
 }
 
+.viewerView--cursorHidden {
+  cursor: none;
+}
+
 .viewerView--centered {
   display: flex;
   flex-direction: column;

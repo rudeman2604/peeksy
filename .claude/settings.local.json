@@ -4,7 +4,8 @@
       "Bash(npm install:*)",
       "Bash(node -e \"const {nanoid} = require\\(''nanoid''\\); console.log\\(nanoid\\(21\\)\\);\")",
       "Bash(npm run:*)",
-      "Bash(timeout 5 node server/index.js)"
+      "Bash(timeout 5 node server/index.js)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

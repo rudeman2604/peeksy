@@ -1,1 +1,72 @@
-/* [MP3] Notification styles — placeholder */
+/* ── Notification Container ── */
+
+.statusNotificationContainer {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--pk-z-notification);
+  display: flex;
+  flex-direction: column;
+  gap: var(--pk-space-sm);
+  pointer-events: none;
+  max-width: 400px;
+  width: 100%;
+}
+
+.statusNotificationContainer--bottom {
+  bottom: var(--pk-space-lg);
+  flex-direction: column-reverse; /* newest closest to bottom edge */
+}
+
+.statusNotificationContainer--top {
+  top: var(--pk-space-lg);
+  flex-direction: column; /* newest closest to top edge */
+}
+
+/* ── Single Notification ── */
+
+.statusNotification {
+  display: flex;
+  align-items: center;
+  gap: var(--pk-space-sm);
+  padding: var(--pk-space-sm) var(--pk-space-md);
+  background: var(--pk-bg-surface);
+  backdrop-filter: var(--pk-backdrop-blur);
+  border: 1px solid var(--pk-border);
+  border-radius: var(--pk-radius-lg);
+  box-shadow: var(--pk-shadow-card);
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity var(--pk-notification-fade) ease;
+  animation: statusNotifSlideIn 300ms ease-out;
+}
+
+.statusNotification--fading {
+  opacity: 0;
+}
+
+@keyframes statusNotifSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.statusNotificationPixie {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.statusNotificationText {
+  color: var(--pk-text-primary);
+  font-size: var(--pk-font-size-sm);
+  font-weight: 500;
+  white-space: nowrap;
+}

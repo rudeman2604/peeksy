@@ -1,11 +1,14 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 import { useSignaling } from '../hooks/useSignaling';
+import { useHeartbeat } from '../hooks/useHeartbeat';
 
 import { WS_MESSAGES } from '../lib/constants';
 import type { WsMessage, ViewerState, WsSdpOffer, WsIceCandidate, WsJoinRejected } from '../lib/types';
 
 import PixieState from './PixieState';
+import PasswordEntry from './PasswordEntry';
+import ViewerControls from './ViewerControls';
 
 import './ViewerView.css';
 
@@ -24,18 +27,42 @@ const rtcConfig: RTCConfiguration = {
   ],
 };
 
+const CURSOR_HIDE_DELAY = 3000;
+
 // ── Component ──
 
 export default function ViewerView({ roomId }: ViewerViewProps) {
   const [viewerState, setViewerState] = useState<ViewerState>('connecting');
   const [viewerId, setViewerId] = useState<string>('');
+  const [passwordError, setPasswordError] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isPiP, setIsPiP] = useState(false);
+  const [cursorHidden, setCursorHidden] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const pcRef = useRef<RTCPeerConnection | null>(null);
   const pendingCandidatesRef = useRef<RTCIceCandidateInit[]>([]);
   const joinedRef = useRef(false);
+  const cursorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const { send, lastMessage, connectionState } = useSignaling(true);
+
+  useHeartbeat({
+    connectionState,
+    onDisconnect: () => {
+      if (viewerState === 'watching') {
+        setViewerState('reconnecting');
+      }
+    },
+    onReconnect: () => {
+      // Allow re-join after reconnect
+      if (joinedRef.current) {
+        joinedRef.current = false;
+      }
+    },
+  });
 
   // Join room once connected to signaling
   useEffect(() => {
@@ -49,11 +76,22 @@ export default function ViewerView({ roomId }: ViewerViewProps) {
     }
   }, [connectionState, roomId, send]);
 
+  // ── Password submit handler ──
+  const handlePasswordSubmit = useCallback((password: string) => {
+    setPasswordError(false);
+    setPasswordLoading(true);
+    send({
+      type: WS_MESSAGES.JOIN_ROOM,
+      roomId,
+      password,
+    } as WsMessage);
+    console.log(`[Viewer] Sent join_room with password`);
+  }, [roomId, send]);
+
   // ── Handle incoming SDP offer ──
   const handleSdpOffer = useCallback(async (sdp: RTCSessionDescriptionInit, incomingViewerId: string) => {
     console.log(`[Viewer] Received SDP offer, creating answer`);
 
-    // Clean up any existing connection
     if (pcRef.current) {
       pcRef.current.close();
     }
@@ -61,7 +99,6 @@ export default function ViewerView({ roomId }: ViewerViewProps) {
     const pc = new RTCPeerConnection(rtcConfig);
     pcRef.current = pc;
 
-    // Handle incoming tracks — attach to video element
     pc.ontrack = (event) => {
       console.log(`[Viewer] Received track: ${event.track.kind}`);
       if (videoRef.current && event.streams[0]) {
@@ -70,7 +107,6 @@ export default function ViewerView({ roomId }: ViewerViewProps) {
       }
     };
 
-    // Handle ICE candidates — send to host via signaling
     pc.onicecandidate = (event) => {
       if (event.candidate) {
         send({
@@ -81,7 +117,6 @@ export default function ViewerView({ roomId }: ViewerViewProps) {
       }
     };
 
-    // Monitor ICE connection state
     pc.oniceconnectionstatechange = () => {
       console.log(`[Viewer] ICE state: ${pc.iceConnectionState}`);
       switch (pc.iceConnectionState) {
@@ -101,10 +136,8 @@ export default function ViewerView({ roomId }: ViewerViewProps) {
     };
 
     try {
-      // Set remote description (the offer)
       await pc.setRemoteDescription(new RTCSessionDescription(sdp));
 
-      // Flush any queued ICE candidates
       for (const candidate of pendingCandidatesRef.current) {
         try {
           await pc.addIceCandidate(new RTCIceCandidate(candidate));
@@ -114,7 +147,6 @@ export default function ViewerView({ roomId }: ViewerViewProps) {
       }
       pendingCandidatesRef.current = [];
 
-      // Create and send answer
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
 
@@ -142,7 +174,6 @@ export default function ViewerView({ roomId }: ViewerViewProps) {
         console.error('[Viewer] Failed to add ICE candidate:', error);
       }
     } else {
-      // Queue for later
       pendingCandidatesRef.current.push(candidate);
     }
   }, []);
@@ -155,12 +186,15 @@ export default function ViewerView({ roomId }: ViewerViewProps) {
       case WS_MESSAGES.JOIN_ACCEPTED: {
         console.log('[Viewer] Join accepted');
         setViewerState('connecting');
+        setPasswordLoading(false);
+        setPasswordError(false);
         break;
       }
 
       case WS_MESSAGES.JOIN_REJECTED: {
         const msg = lastMessage as WsJoinRejected;
         console.log(`[Viewer] Join rejected: ${msg.reason}`);
+        setPasswordLoading(false);
         switch (msg.reason) {
           case 'room_not_found':
             setViewerState('room-not-found');
@@ -170,6 +204,7 @@ export default function ViewerView({ roomId }: ViewerViewProps) {
             break;
           case 'wrong_password':
             setViewerState('password');
+            setPasswordError(true);
             break;
           default:
             setViewerState('disconnected');
@@ -222,16 +257,97 @@ export default function ViewerView({ roomId }: ViewerViewProps) {
     };
   }, []);
 
+  // ── Fullscreen toggle ──
+  const handleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen?.();
+    } else {
+      document.exitFullscreen?.();
+    }
+  }, []);
+
+  // Track fullscreen state
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    return () => document.removeEventListener('fullscreenchange', handleFsChange);
+  }, []);
+
+  // ── Picture-in-Picture toggle ──
+  const handlePiP = useCallback(async () => {
+    try {
+      if (document.pictureInPictureElement) {
+        await document.exitPictureInPicture();
+        setIsPiP(false);
+      } else if (videoRef.current) {
+        await videoRef.current.requestPictureInPicture();
+        setIsPiP(true);
+      }
+    } catch (error) {
+      console.error('[Viewer] PiP failed:', error);
+    }
+  }, []);
+
+  // ── Auto-hide cursor in watching mode ──
+  useEffect(() => {
+    if (viewerState !== 'watching') return;
+
+    const resetCursorTimer = () => {
+      setCursorHidden(false);
+      if (cursorTimerRef.current) {
+        clearTimeout(cursorTimerRef.current);
+      }
+      cursorTimerRef.current = setTimeout(() => {
+        setCursorHidden(true);
+      }, CURSOR_HIDE_DELAY);
+    };
+
+    resetCursorTimer();
+
+    window.addEventListener('mousemove', resetCursorTimer);
+    window.addEventListener('touchstart', resetCursorTimer);
+
+    return () => {
+      window.removeEventListener('mousemove', resetCursorTimer);
+      window.removeEventListener('touchstart', resetCursorTimer);
+      if (cursorTimerRef.current) {
+        clearTimeout(cursorTimerRef.current);
+      }
+      setCursorHidden(false);
+    };
+  }, [viewerState]);
+
   // ── Render based on viewer state ──
+
+  if (viewerState === 'password') {
+    return (
+      <PasswordEntry
+        onSubmit={handlePasswordSubmit}
+        isLoading={passwordLoading}
+        error={passwordError}
+      />
+    );
+  }
 
   if (viewerState === 'watching') {
     return (
-      <div className="viewerView">
+      <div
+        ref={containerRef}
+        className={`viewerView ${cursorHidden ? 'viewerView--cursorHidden' : ''}`}
+      >
         <video
           ref={videoRef}
           className="viewerVideo"
           autoPlay
           playsInline
+        />
+        <ViewerControls
+          onFullscreen={handleFullscreen}
+          onPiP={handlePiP}
+          isFullscreen={isFullscreen}
+          isPiP={isPiP}
         />
       </div>
     );
@@ -241,6 +357,14 @@ export default function ViewerView({ roomId }: ViewerViewProps) {
     return (
       <div className="viewerView viewerView--centered">
         <PixieState state="connecting" size="large" />
+      </div>
+    );
+  }
+
+  if (viewerState === 'reconnecting') {
+    return (
+      <div className="viewerView viewerView--centered">
+        <PixieState state="connectionLost" size="large" statusText="Reconnecting..." />
       </div>
     );
   }

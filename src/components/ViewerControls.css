@@ -1,0 +1,67 @@
+/* ── Viewer Floating Control Bar ── */
+
+.viewerControls {
+  position: fixed;
+  bottom: var(--pk-space-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--pk-z-toolbar);
+  transition: opacity var(--pk-transition-normal), transform var(--pk-transition-normal);
+}
+
+.viewerControls--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.viewerControls--hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(8px);
+  pointer-events: none;
+}
+
+.viewerControlsBar {
+  display: flex;
+  align-items: center;
+  gap: var(--pk-space-md);
+  padding: var(--pk-space-sm) var(--pk-space-md);
+  background: var(--pk-bg-surface);
+  backdrop-filter: var(--pk-backdrop-blur);
+  border: 1px solid var(--pk-border);
+  border-radius: var(--pk-radius-pill);
+  box-shadow: var(--pk-shadow-card);
+}
+
+.viewerControlsLogo {
+  height: 20px;
+  width: auto;
+  user-select: none;
+  opacity: 0.7;
+}
+
+.viewerControlsActions {
+  display: flex;
+  align-items: center;
+  gap: var(--pk-space-xs);
+}
+
+.viewerControlsButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--pk-radius-circle);
+  color: var(--pk-text-secondary);
+  font-size: var(--pk-font-size-md);
+  cursor: pointer;
+  transition: all var(--pk-transition-fast);
+}
+
+.viewerControlsButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--pk-border-hover);
+  color: var(--pk-text-primary);
+}

@@ -1,1 +1,341 @@
-/* [MP3] Settings modal styles — placeholder */
+/* ── Settings Overlay ── */
+
+.settingsOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--pk-z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  animation: settingsOverlayFadeIn 200ms ease-out;
+}
+
+@keyframes settingsOverlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── Settings Panel ── */
+
+.settingsPanel {
+  width: 90%;
+  max-width: 480px;
+  max-height: 85vh;
+  background: var(--pk-bg-secondary);
+  border: 1px solid var(--pk-border);
+  border-radius: var(--pk-radius-xl);
+  box-shadow: var(--pk-shadow-card);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: settingsPanelSlideIn 200ms ease-out;
+}
+
+@keyframes settingsPanelSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Header ── */
+
+.settingsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--pk-space-md) var(--pk-space-lg);
+  border-bottom: 1px solid var(--pk-border);
+  flex-shrink: 0;
+}
+
+.settingsTitle {
+  color: var(--pk-text-primary);
+  font-size: var(--pk-font-size-lg);
+  font-weight: 700;
+}
+
+.settingsCloseButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  border-radius: var(--pk-radius-circle);
+  color: var(--pk-text-secondary);
+  font-size: var(--pk-font-size-md);
+  cursor: pointer;
+  transition: all var(--pk-transition-fast);
+}
+
+.settingsCloseButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--pk-text-primary);
+}
+
+/* ── Scrollable Sections ── */
+
+.settingsSections {
+  padding: var(--pk-space-md) var(--pk-space-lg);
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pk-space-md);
+}
+
+.settingsSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pk-space-sm);
+}
+
+.settingsSectionTitle {
+  color: var(--pk-text-primary);
+  font-size: var(--pk-font-size-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.settingsHint {
+  color: var(--pk-text-muted);
+  font-size: var(--pk-font-size-xs);
+}
+
+/* ── Toggle Switch (pill-shaped) ── */
+
+.settingsToggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pk-space-sm);
+}
+
+.settingsToggleLabel {
+  color: var(--pk-text-secondary);
+  font-size: var(--pk-font-size-sm);
+}
+
+.settingsToggle {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: var(--pk-radius-pill);
+  cursor: pointer;
+  transition: background var(--pk-transition-fast);
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.settingsToggle--on {
+  background: var(--pk-accent);
+}
+
+.settingsToggleThumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: var(--pk-radius-circle);
+  transition: transform var(--pk-transition-fast);
+}
+
+.settingsToggle--on .settingsToggleThumb {
+  transform: translateX(18px);
+}
+
+.settingsPerfToggles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pk-space-xs);
+  padding-left: var(--pk-space-sm);
+  border-left: 2px solid var(--pk-border);
+  margin-left: var(--pk-space-xs);
+}
+
+/* ── Preset Grid ── */
+
+.settingsPresetGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--pk-space-xs);
+}
+
+.settingsPresetButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--pk-space-sm);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--pk-border);
+  border-radius: var(--pk-radius-md);
+  color: var(--pk-text-secondary);
+  font-family: var(--pk-font-family);
+  cursor: pointer;
+  transition: all var(--pk-transition-fast);
+}
+
+.settingsPresetButton:hover {
+  border-color: var(--pk-border-hover);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.settingsPresetButton--active {
+  border-color: var(--pk-accent);
+  background: var(--pk-accent-glow);
+  color: var(--pk-text-primary);
+}
+
+.settingsPresetName {
+  font-size: var(--pk-font-size-sm);
+  font-weight: 600;
+}
+
+.settingsPresetDesc {
+  font-size: var(--pk-font-size-xs);
+  opacity: 0.7;
+}
+
+/* ── Custom Quality ── */
+
+.settingsCustomQuality {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--pk-space-sm);
+}
+
+/* ── Input Rows ── */
+
+.settingsInputRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pk-space-sm);
+}
+
+.settingsInputLabel {
+  color: var(--pk-text-secondary);
+  font-size: var(--pk-font-size-sm);
+  flex-shrink: 0;
+}
+
+.settingsInput {
+  width: 100px;
+  padding: var(--pk-space-xs) var(--pk-space-sm);
+  background: var(--pk-bg-primary);
+  border: 1px solid var(--pk-border);
+  border-radius: var(--pk-radius-md);
+  color: var(--pk-text-primary);
+  font-family: var(--pk-font-family);
+  font-size: var(--pk-font-size-sm);
+  outline: none;
+  transition: border-color var(--pk-transition-fast);
+}
+
+.settingsInput:focus {
+  border-color: var(--pk-accent);
+}
+
+.settingsInput--full {
+  width: 100%;
+}
+
+.settingsSelect {
+  padding: var(--pk-space-xs) var(--pk-space-sm);
+  background: var(--pk-bg-primary);
+  border: 1px solid var(--pk-border);
+  border-radius: var(--pk-radius-md);
+  color: var(--pk-text-primary);
+  font-family: var(--pk-font-family);
+  font-size: var(--pk-font-size-sm);
+  outline: none;
+  cursor: pointer;
+  transition: border-color var(--pk-transition-fast);
+}
+
+.settingsSelect:focus {
+  border-color: var(--pk-accent);
+}
+
+/* ── Color Inputs ── */
+
+.settingsColorRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pk-space-sm);
+}
+
+.settingsColorInput {
+  width: 36px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--pk-border);
+  border-radius: var(--pk-radius-sm);
+  cursor: pointer;
+  background: transparent;
+}
+
+.settingsColorInput::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+
+.settingsColorInput::-webkit-color-swatch {
+  border: none;
+  border-radius: var(--pk-radius-sm);
+}
+
+/* ── About ── */
+
+.settingsAbout {
+  display: flex;
+  align-items: center;
+  gap: var(--pk-space-md);
+}
+
+.settingsAboutLogo {
+  height: 32px;
+  width: auto;
+  user-select: none;
+}
+
+.settingsAboutText {
+  color: var(--pk-text-muted);
+  font-size: var(--pk-font-size-xs);
+  line-height: 1.5;
+}
+
+/* ── Reset Button ── */
+
+.settingsResetButton {
+  width: 100%;
+  padding: var(--pk-space-sm);
+  background: transparent;
+  border: 1px solid var(--pk-border);
+  border-radius: var(--pk-radius-md);
+  color: var(--pk-text-muted);
+  font-family: var(--pk-font-family);
+  font-size: var(--pk-font-size-sm);
+  cursor: pointer;
+  transition: all var(--pk-transition-fast);
+  margin-top: var(--pk-space-sm);
+}
+
+.settingsResetButton:hover {
+  border-color: var(--pk-live-red);
+  color: var(--pk-live-red);
+  background: rgba(239, 68, 68, 0.08);
+}
